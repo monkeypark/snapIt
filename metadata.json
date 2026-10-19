@@ -1,0 +1,6 @@
+{
+  "name": "Snap It!",
+  "description": "Test your reflexes in this high-speed procedural arcade game. Master three modes and climb the leaderboard with precision timing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
