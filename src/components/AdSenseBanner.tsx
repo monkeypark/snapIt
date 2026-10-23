@@ -16,12 +16,12 @@ interface AdSenseBannerProps {
 
 export const AdSenseBanner: React.FC<AdSenseBannerProps> = ({
   slotId = AD_CONFIG.adsense.bannerSlotId,
-  format = 'horizontal',
   className = ''
 }) => {
   const [adLoaded, setAdLoaded] = useState(false);
   const [adError, setAdError] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const insRef = React.useRef<HTMLModElement>(null);
   const isNative = adService.isNativeEnvironment();
 
@@ -63,47 +63,60 @@ export const AdSenseBanner: React.FC<AdSenseBannerProps> = ({
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 z-50 pointer-events-auto flex justify-center px-2 pb-1 transition-all duration-300 ${
+      className={`fixed bottom-0 left-0 right-0 z-50 pointer-events-auto flex justify-center px-2 pb-0.5 transition-all duration-300 ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0 pointer-events-none'
       }`}
     >
       <aside
         aria-label="Google AdSense Banner"
-        className={`w-full max-w-[468px] overflow-hidden rounded-t-xl rounded-b-md border-t border-x border-slate-800/90 bg-slate-950/95 backdrop-blur-md shadow-2xl transition-all duration-300 ${className}`}
-        style={{ minHeight: '52px', maxHeight: '72px' }}
+        className={`adsense-banner-container w-full max-w-[360px] overflow-hidden rounded-t-xl border-t border-x border-slate-800/90 bg-slate-950/95 backdrop-blur-md shadow-2xl transition-all duration-300 ${className}`}
+        style={{ maxHeight: isCollapsed ? '24px' : '72px', height: 'auto' }}
       >
-        {/* Top subtle badge */}
-        <div className="flex items-center justify-between px-3 py-0.5 border-b border-slate-800/50 text-[9px] font-mono uppercase tracking-wider text-slate-500 bg-slate-900/60">
+        {/* Top Header Bar with Minimize/Toggle Button */}
+        <div className="flex items-center justify-between px-3 py-1 border-b border-slate-800/60 text-[9px] font-mono uppercase tracking-wider text-slate-500 bg-slate-900/80">
           <span className="flex items-center gap-1.5">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500/80 animate-pulse" />
             Google AdSense
           </span>
-          <span className="text-slate-600">Ad</span>
+          <button
+            onClick={() => setIsCollapsed((prev) => !prev)}
+            className="px-1.5 py-0.5 rounded text-[8px] font-bold text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+            title={isCollapsed ? 'Expand Ad' : 'Collapse Ad'}
+          >
+            {isCollapsed ? '▲ EXPAND' : '▼ HIDE'}
+          </button>
         </div>
 
-        {/* Ad Content */}
-        <div className="flex items-center justify-center p-1 min-h-[48px] max-h-[52px] overflow-hidden">
-          {AD_CONFIG.adsense.testMode ? (
-            <div className="flex flex-col items-center justify-center py-0.5 text-center select-none">
-              <p className="text-[11px] font-semibold text-slate-300 tracking-wide">
-                🎯 Google AdSense Banner (Bottom)
-              </p>
-              <p className="text-[9px] text-slate-500 mt-0.5 font-mono">
-                Publisher: {AD_CONFIG.adsense.publisherId} • Slot: {slotId}
-              </p>
-            </div>
-          ) : (
-            <ins
-              ref={insRef}
-              className="adsbygoogle"
-              style={{ display: 'inline-block', width: '100%', height: '50px' }}
-              data-ad-client={AD_CONFIG.adsense.publisherId}
-              data-ad-slot={slotId}
-              data-ad-format={format}
-              data-full-width-responsive="true"
-            />
-          )}
-        </div>
+        {/* Ad Unit Container — strictly capped at 50px height for standard mobile banner */}
+        {!isCollapsed && (
+          <div className="flex items-center justify-center p-0.5 h-[50px] max-h-[50px] overflow-hidden">
+            {AD_CONFIG.adsense.testMode ? (
+              <div className="flex flex-col items-center justify-center py-0.5 text-center select-none">
+                <p className="text-[10px] font-semibold text-slate-300 tracking-wide">
+                  🎯 Google AdSense Banner
+                </p>
+                <p className="text-[8px] text-slate-500 font-mono">
+                  Slot: {slotId} (320x50)
+                </p>
+              </div>
+            ) : (
+              <ins
+                ref={insRef}
+                className="adsbygoogle"
+                style={{
+                  display: 'inline-block',
+                  width: '320px',
+                  maxWidth: '100%',
+                  height: '50px',
+                  maxHeight: '50px',
+                  overflow: 'hidden'
+                }}
+                data-ad-client={AD_CONFIG.adsense.publisherId}
+                data-ad-slot={slotId}
+              />
+            )}
+          </div>
+        )}
       </aside>
     </div>
   );

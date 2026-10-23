@@ -10,3 +10,23 @@
 #root .pointer-events-auto {
   cursor: default;
 }
+
+/* Enforce strict standard mobile banner height so AdSense cannot blow up over game buttons */
+.adsense-banner-container {
+  max-height: 72px !important;
+  height: auto !important;
+  overflow: hidden !important;
+}
+
+.adsense-banner-container ins.adsbygoogle {
+  max-height: 50px !important;
+  height: 50px !important;
+  overflow: hidden !important;
+}
+
+.adsense-banner-container iframe,
+.adsense-banner-container div[id^="aswift_"] {
+  max-height: 50px !important;
+  height: 50px !important;
+  overflow: hidden !important;
+}

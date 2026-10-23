@@ -187,7 +187,7 @@ export const MainMenuButtons: React.FC = () => {
   return (
     <div className="absolute inset-0 z-20 pointer-events-none flex flex-col justify-center items-center">
       {/* Positioned right below Daily Mission widget */}
-      <div className="w-[88%] max-w-md pointer-events-auto mt-28 md:mt-32">
+      <div className="w-[88%] max-w-md pointer-events-auto mt-20 md:mt-28">
         <AnimatePresence mode="wait">
           {view === 'modes' ? (
             /* Mode Selection Buttons with Staggered Entrance */
@@ -197,7 +197,7 @@ export const MainMenuButtons: React.FC = () => {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="flex flex-col gap-2.5"
+              className="flex flex-col gap-2 md:gap-2.5"
             >
               {MODES.map((m) => {
                 const scoreText = scores[m.id] || 'BEST: -';
@@ -211,7 +211,7 @@ export const MainMenuButtons: React.FC = () => {
                     whileTap={{ scale: 0.97 }}
                     onMouseEnter={() => soundManager.playHover()}
                     onClick={() => handleModeClick(m)}
-                    className="group relative flex items-center justify-between px-4 py-3.5 rounded-2xl bg-slate-900/40 hover:bg-slate-800/60 border border-white/5 hover:border-white/15 backdrop-blur-md shadow-lg transition-colors cursor-pointer text-left overflow-hidden"
+                    className="group relative flex items-center justify-between px-3.5 py-2.5 md:py-3.5 rounded-2xl bg-slate-900/40 hover:bg-slate-800/60 border border-white/5 hover:border-white/15 backdrop-blur-md shadow-lg transition-colors cursor-pointer text-left overflow-hidden"
                   >
                     {/* Left Neon Accent Bar */}
                     <div
@@ -310,7 +310,7 @@ export const MainMenuButtons: React.FC = () => {
       </div>
 
       {/* Footer Dock */}
-      <div className={`absolute ${!isNative ? 'bottom-20' : 'bottom-6'} left-0 right-0 pointer-events-auto flex justify-center items-center gap-3 px-4 z-30 transition-all duration-300`}>
+      <div className={`absolute ${!isNative ? 'bottom-[72px]' : 'bottom-6'} left-0 right-0 pointer-events-auto flex justify-center items-center gap-3 px-4 z-30 transition-all duration-300`}>
         <button
           onClick={() => {
             soundManager.playSelect();
