@@ -1,6 +1,6 @@
 {
   "name": "Snap It!",
-  "description": "Test your reflexes in this high-speed procedural arcade game. Master three modes and climb the leaderboard with precision timing.",
+  "description": "Test your reflexes in this high-speed procedural arcade game. Master multiple intense game modes, generate high-resolution cyberpunk score cards, and share your records to challenge friends.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

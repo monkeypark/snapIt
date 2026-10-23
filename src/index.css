@@ -1,1 +1,12 @@
 @import "tailwindcss";
+
+#root button,
+#root [role="button"],
+#root a,
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+#root .pointer-events-auto {
+  cursor: default;
+}

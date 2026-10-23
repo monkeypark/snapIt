@@ -15,10 +15,11 @@ export class TrainingScene extends Phaser.Scene {
     create() {
         const { width, height } = this.cameras.main;
 
-        // Background
-        this.add.rectangle(0, 0, width, height, 0x020617).setOrigin(0);
+        // Pastel Aesthetic Background with Focus Scrim
+        this.add.image(width / 2, height / 2, 'game_bg').setDisplaySize(width, height).setOrigin(0.5);
+        this.add.rectangle(0, 0, width, height, 0x090d16).setOrigin(0).setAlpha(0.35);
         this.cameras.main.fadeIn(500, 2, 6, 23);
-        this.add.tileSprite(0, 0, width, height, 'dots').setOrigin(0, 0).setAlpha(0.2);
+        this.add.tileSprite(0, 0, width, height, 'dots').setOrigin(0, 0).setAlpha(0.15);
 
         // Header
         this.add.text(width / 2, 60, 'BASIC TRAINING', {

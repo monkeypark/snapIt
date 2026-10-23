@@ -163,6 +163,8 @@ $$T_{rot} = \max(200ms,\; T_{base} - Combo \times \Delta t)$$
   $110\text{Hz}$ 线性跌落至 $55\text{Hz}$ 的 Sawtooth 粗糙音色，产生鲜明的挫败感提示。
 - **胜利大和弦 (Victory Fanfare)**：
   由 C5, E5, G5, C6 构成的四音阶方形波琶音。
+- **全新纪录华丽凯歌 (New Record Fanfare & Shimmer)**：
+  当玩家打破历史最高纪录时触发的特殊音效。由 C5, E5, G5, B5, C6, E6 构成的极速高阶大调琶音，叠加上空灵闪烁的超高频泛音脉冲（2200Hz~4000Hz Sparkle Shimmer），仪式感与心理满足感拉满。
 - **自适应动态心跳 BGM (Procedural Rhythm Engine)**：
   利用 `AudioContext.currentTime` 与递归计时器构建 8 分音符步进鼓机：
   - 标准模式（120 BPM）：低音底鼓（120Hz Tom）+ 随机交错小军鼓 + 柔和高频闭镲（Tick）；
@@ -172,18 +174,34 @@ $$T_{rot} = \max(200ms,\; T_{base} - Combo \times \Delta t)$$
 - **多级触觉振动 (Capacitor Haptics)**：
   - 普通按钮/普通命中：Light Impact（10ms）；
   - 5 倍连击暴击：Medium Impact（30ms）；
-  - 胜利/打破纪录：Success Notification（双振序列）；
+  - 胜利判定：Success Notification；
+  - 刷新历史纪录：Heavy Impact 爆破级震感；
   - 失误中断：Error Notification（200ms 强震）。
   - 内置优雅降级方案：若在纯浏览器环境运行，自动调用 HTML5 `navigator.vibrate`。
-- **双模高分存储 (Dual-Criteria High Score)**：
-  - 自动识别计时制（Classic/Memory：时间越低越好）与计分制（Attack/Crazy：分数越高越好）的不同极值判断逻辑；
+- **分级双模高分与纪录破发引擎 (Difficulty-Aware Record Break Engine)**：
+  - **难度独立纪录隔离**：分别独立持久化 Easy、Medium、Hard 各难度与各模式的最高纪录（`highscore_${mode}_${difficulty}` 与全局 `highscore_${mode}`），解决过往在 Easy 通关后 Hard 无法触发破纪录的判定冲突；
+  - **双重存储防崩容灾**：全面集成 Capacitor Preferences 与 HTML5 `window.localStorage` 双保险安全回退机制；
+  - **全链路破纪录庆祝体系 (Grand New Record Celebration)**：
+    - **双环辉光结算徽章**：破发瞬间，卡片生成「🏆 NEW RECORD! 🏆」双层流光外环呼吸徽章，并同步对比展现历史旧前高（Previous Best）；
+    - **金辉粒子双连爆破**：触发大调激昂破纪录音效（`playNewRecord()`）与双波次金色星芒粒子喷涌；
+    - **主界面与选关高亮透传**：主菜单模式卡片与难度选关卡片实时透传金色「★ RECORD: xx」与各难度最佳成绩，极大增强突破正反馈。
   - 独立保存最近 50 次对战的完整元数据（时间戳、模式、得分、命中率），用于数据回溯。
 
-### 5.3 `MissionManager`：每日任务驱动系统
-- **零服务器轻量级任务流**：
-  - 基于自然日（`toDateString()`）对比自动刷新，防止作弊或脏数据；
-  - 覆盖多样化挑战维度：单局总命中数（50 个）、连击连胜（10x Combo）、极限竞速（经典模式 15s 内通关）、高压挑战（Crazy 模式 30x Combo）；
-  - 预留任务奖励成就体系（Neon Core Skin、Indigo Trail、Devil Red Trail 等）。
+### 5.3 `MissionManager`：每日任务与专属视觉勋章陈列系统 (Daily Missions & Visual Badges)
+- **自然日确定性哈希任务生成 (Deterministic Daily Quest Generator)**：
+  - 基于自然日字符串（如 `2026-10-19`）运行位运算多项式哈希，计算全局每日种子 `seed = getDaySeed(dateStr)`；
+  - 保证当日所有进入游戏的挑战者获得一致且新鲜的每日任务轮换：
+    - **核心点击协议 (Tap Protocol)**：动态生成每日精准触控指标（如 50、60、75、80 次累计有效点击）；
+    - **心流连击考验 (Combo Flow)**：要求在任意模式下达成 10x ~ 18x 连击极限；
+    - **模式大师专项 (Mode Quests)**：随机轮换「Time Attack 30+ 分冲刺」、「Classic 10 阶段 sub-16s 疾速通关」、「单局 90%+ 极致命中率」等专项。
+- **视觉勋章与陈列柜体系 (Visual Badge Cabinet & Tiers)**：
+  - 每个每日任务绑定专属的视觉勋章（如「⚡ Neon Reflex Badge」、「★ Hyper Streak Medal」、「✦ Chrono Blitz Insignia」）；
+  - 勋章划分多阶色彩与地位标签（Bronze, Silver, Gold, Diamond），内置独创的 Kawaii 矢量图腾与流光外环；
+  - 玩家可在主菜单直接开启「★ BADGE CABINET」陈列柜，查阅已解锁勋章的达成历史、稀有度与背景故事，并提供点击检视（Inspection Card）交互。
+- **全通道奖励祝捷机制 (Celebration Fanfare & Claim Flow)**：
+  - **主菜单常驻微型卡片**：直接展示当前每日核心任务、实时百分比进度条与完成状态。若有待领勋章，显示呼吸式金色脉冲按钮；
+  - **局内即时浮窗 (In-Game Toast)**：玩家在战斗中命中最后一击完成任务时，屏幕上方立刻滑出「★ MISSION COMPLETED ★」霓虹弹窗，伴随三音升阶清亮和弦与成功触觉震感；
+  - **全屏勋章颁奖礼 (Badge Unlock Modal)**：点击领取时，触发大调和弦泛音琶音（`playBadgeClaim()`）与重冲击震动，展现大型旋转流光勋章与粒子爆裂，给予充实的成就感。
 
 ### 5.4 自研 Canvas 轻量级图表引擎 (`StatsScene`)
 不引入高负荷第三方图表库，在 Phaser 内部以 Graphics 原生绘制高性能折线图：
@@ -191,6 +209,24 @@ $$T_{rot} = \max(200ms,\; T_{base} - Combo \times \Delta t)$$
 - 背景微透明参考线（Grid Lines）；
 - 平滑渐变充填面积带（Area Fill）；
 - 交互式交互点触控扩大（Hover Scale 1.5x）与 Tooltip 动态气泡。
+
+### 5.5 全平台极速战绩卡合成与原生分享引擎 (`ScoreCard` & `ShareScoreService`)
+- **1080 × 1350 视网膜级赛博朋克战报卡片渲染 (`ScoreCard.ts`)**：
+  - 基于 HTML5 2D Canvas 离屏渲染，严格采用 4:5 国际社交媒体（Instagram / Twitter / WhatsApp / 微信）黄金比例；
+  - **赛博美学全景视觉构建**：深空暗夜渐变底色（`#020617` ~ `#0b0c2a`）、多点霓虹辐射光晕、HUD 网格矩阵与四角科技切角边框（Corner Brackets）；
+  - **真实数据动态挂载**：绝对严谨提取对局真实得分（计时制毫秒时间 / 计分制总积分）、模式名称与难度；
+  - **多维战力数据卡**：实时排布「ACCURACY（命中率）」、「TOTAL HITS（总有效击中）」、「MAX COMBO / AVG TIME PER HIT（最大连击 / 平均单次命中时延）」；
+  - **破纪录金辉流光特别版**：若打破历史纪录，自动呈现双层金辉「🏆 NEW ALL-TIME RECORD! 🏆」专属徽章与金光耀斑；
+  - **社交战书模块**：醒目嵌入「⚡ CAN YOU BEAT MY SCORE? ⚡」战意激扬挑战邀请语与 Snap It! 品牌水印（Play. Snap. Repeat.）。
+- **Capacitor 原生与 Web 渐进式多轨分享管道 (`ShareScoreService.ts`)**：
+  - **移动原生端（Android / iOS）**：
+    - 图像经 Blob 转 Base64 编码，调用 `@capacitor/filesystem` 安全写入系统沙盒缓存目录（`Directory.Cache`）；
+    - 调起原生系统级分享面板（`@capacitor/share`），附带个性化战绩战书邀请与 PNG 高清附件；
+    - 分享后及下次生成时自动清空临时战报文件，杜绝系统存储占用膨胀；
+  - **Web 浏览器端**：
+    - 优先探测 `navigator.canShare({ files })`，支持现代移动浏览器直接拉起系统面板；
+    - **无缝容灾降级**：在不支持文件分享的桌面或老旧浏览器中，自动触发图片高速直下并同步将挑战口号写入系统剪贴板（`navigator.clipboard.writeText`），弹出炫彩浮窗引导；
+  - **防抖防连击与优雅取消**：内置 `isSharingInProgress` 状态锁，分享期间按钮切换为「GENERATING...」并锁定点击；无论用户取消、关闭分享还是网络异常，均在 `finally` 阶段无损复原按钮与操作流，绝不阻断重新开始对局或返回主菜单。
 
 ---
 

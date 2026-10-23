@@ -34,26 +34,135 @@ export class NativeBridge {
     }
   }
 
-  static async saveHighScore(mode: string, score: number) {
-    const key = `highscore_${mode}`;
-    const current = await this.getHighScore(mode);
-    
-    // For time-based modes (Classic, Memory), lower is better
-    const isTimeBased = mode === 'classic' || mode === 'memory';
-    
-    if (current === 0 || (isTimeBased ? score < current : score > current)) {
-      await Preferences.set({
-        key,
-        value: score.toString()
-      });
-      return true;
+  static async hapticHeavy() {
+    try {
+      await Haptics.impact({ style: ImpactStyle.Heavy });
+    } catch (e) {
+      if (navigator.vibrate) navigator.vibrate([40, 60, 80]);
     }
-    return false;
   }
 
-  static async getHighScore(mode: string): Promise<number> {
-    const { value } = await Preferences.get({ key: `highscore_${mode}` });
-    return value ? parseFloat(value) : 0;
+  static async saveHighScore(
+    mode: string,
+    score: number,
+    difficulty?: string
+  ): Promise<{ isNewRecord: boolean; previousBest: number; newBest: number; difficultyKey?: string }> {
+    const isTimeBased = mode === 'classic' || mode === 'memory';
+    if (score <= 0) {
+      const current = await this.getHighScore(mode, difficulty);
+      return { isNewRecord: false, previousBest: current, newBest: current };
+    }
+
+    // 1. Check difficulty-specific record if applicable
+    const diffKey = difficulty ? `highscore_${mode}_${difficulty}` : null;
+    const modeKey = `highscore_${mode}`;
+
+    const previousDiffBest = diffKey ? await this.getStorageNumber(diffKey) : 0;
+    const previousModeBest = await this.getStorageNumber(modeKey);
+
+    const isDiffRecord = diffKey 
+      ? (previousDiffBest === 0 || (isTimeBased ? score < previousDiffBest : score > previousDiffBest))
+      : false;
+
+    const isModeRecord = previousModeBest === 0 || (isTimeBased ? score < previousModeBest : score > previousModeBest);
+
+    const isRecord = isDiffRecord || isModeRecord;
+    const previousRelevantBest = diffKey && previousDiffBest > 0 ? previousDiffBest : previousModeBest;
+
+    if (isRecord) {
+      if (diffKey && isDiffRecord) {
+        await this.setStorageNumber(diffKey, score);
+      }
+      if (isModeRecord) {
+        await this.setStorageNumber(modeKey, score);
+      }
+      // Record this mode as having a fresh new record for visual glow in menus
+      await this.setStorageString('latest_new_record_mode', mode);
+      await this.setStorageNumber('latest_new_record_time', Date.now());
+
+      return {
+        isNewRecord: true,
+        previousBest: previousRelevantBest,
+        newBest: score,
+        difficultyKey: difficulty
+      };
+    }
+
+    return {
+      isNewRecord: false,
+      previousBest: previousRelevantBest,
+      newBest: previousRelevantBest,
+      difficultyKey: difficulty
+    };
+  }
+
+  static async getHighScore(mode: string, difficulty?: string): Promise<number> {
+    if (difficulty) {
+      const diffScore = await this.getStorageNumber(`highscore_${mode}_${difficulty}`);
+      if (diffScore > 0) return diffScore;
+    }
+    return await this.getStorageNumber(`highscore_${mode}`);
+  }
+
+  private static async getStorageNumber(key: string): Promise<number> {
+    try {
+      const { value } = await Preferences.get({ key });
+      if (value !== null && value !== undefined && value !== '') {
+        const parsed = parseFloat(value);
+        if (!isNaN(parsed)) return parsed;
+      }
+    } catch (e) {
+      // Fallback to window.localStorage
+    }
+
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const val = window.localStorage.getItem(key);
+        if (val) {
+          const parsed = parseFloat(val);
+          if (!isNaN(parsed)) return parsed;
+        }
+      }
+    } catch (e) {}
+
+    return 0;
+  }
+
+  private static async setStorageNumber(key: string, value: number): Promise<void> {
+    const str = value.toString();
+    try {
+      await Preferences.set({ key, value: str });
+    } catch (e) {}
+
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(key, str);
+      }
+    } catch (e) {}
+  }
+
+  private static async setStorageString(key: string, value: string): Promise<void> {
+    try {
+      await Preferences.set({ key, value });
+    } catch (e) {}
+
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(key, value);
+      }
+    } catch (e) {}
+  }
+
+  static async getLatestRecordMode(): Promise<string | null> {
+    try {
+      const { value } = await Preferences.get({ key: 'latest_new_record_mode' });
+      return value || null;
+    } catch (e) {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        return window.localStorage.getItem('latest_new_record_mode');
+      }
+      return null;
+    }
   }
 
   static async hasSeenTraining(): Promise<boolean> {

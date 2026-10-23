@@ -1,0 +1,8 @@
+{
+  "appId": "com.snapit.game",
+  "appName": "Snap It!",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}

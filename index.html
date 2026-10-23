@@ -4,39 +4,43 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Snap It! | Modern Speed Challenge</title>
+    <meta name="description" content="Test your reflexes in this high-speed procedural arcade game. Master multiple intense game modes, generate high-resolution cyberpunk score cards, and share your records to challenge friends." />
+    <meta property="og:title" content="Snap It! | Modern Speed Challenge" />
+    <meta property="og:description" content="Test your reflexes in this high-speed procedural arcade game. Master multiple intense game modes, generate high-resolution cyberpunk score cards, and share your records to challenge friends." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Barlow+Condensed:ital,wght@0,700;0,900;1,700;1,900&display=swap" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script id="google-adsense-script" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3612854431763761" crossorigin="anonymous"></script>
     <style>
-      * {
+      html, body, #game-container {
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
-      }
-      body, html {
         width: 100%;
         height: 100%;
-        background-color: #020617;
         overflow: hidden;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        cursor: none;
+        background-color: #020617;
       }
       #root {
+        position: absolute;
+        inset: 0;
         width: 100vw;
         height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: hidden;
+        pointer-events: none;
+        z-index: 20;
       }
       canvas {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
+        display: block;
+        margin: auto;
+        image-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
       }
     </style>
   </head>
   <body>
+    <div id="game-container"></div>
     <div id="root"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

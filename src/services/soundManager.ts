@@ -203,6 +203,32 @@ class SoundManager {
     });
   }
 
+  public playCountdownTick(isFinal: boolean = false) {
+    this.init();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const g = this.ctx.createGain();
+
+    osc.type = isFinal ? 'triangle' : 'sine';
+    const freq = isFinal ? 880 : 587.33; // D5 for 3, 2, 1; A5 for SNAP!
+    osc.frequency.setValueAtTime(freq, now);
+    if (isFinal) {
+      osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.15); // Ramp up to D6
+    }
+
+    g.gain.setValueAtTime(0, now);
+    g.gain.linearRampToValueAtTime(isFinal ? 0.35 : 0.22, now + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, now + (isFinal ? 0.35 : 0.18));
+
+    osc.connect(g);
+    g.connect(this.sfxGain);
+
+    osc.start(now);
+    osc.stop(now + (isFinal ? 0.35 : 0.18));
+  }
+
   public playGameOver() {
     this.init();
     if (!this.ctx || !this.sfxGain) return;
@@ -240,6 +266,108 @@ class SoundManager {
     this.playSelect();
   }
 
+  public playNewRecord() {
+    this.init();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const now = this.ctx.currentTime;
+    // Triumphant ascending fanfare notes: C5, E5, G5, B5, C6, E6
+    const fanfareNotes = [523.25, 659.25, 783.99, 987.77, 1046.50, 1318.51];
+    
+    fanfareNotes.forEach((freq, i) => {
+      const osc = this.ctx!.createOscillator();
+      const g = this.ctx!.createGain();
+      
+      osc.type = i >= 4 ? 'sine' : 'triangle';
+      osc.frequency.setValueAtTime(freq, now + i * 0.08);
+      
+      g.gain.setValueAtTime(0, now + i * 0.08);
+      g.gain.linearRampToValueAtTime(0.22, now + i * 0.08 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.35);
+
+      osc.connect(g);
+      g.connect(this.sfxGain!);
+
+      osc.start(now + i * 0.08);
+      osc.stop(now + i * 0.08 + 0.35);
+    });
+
+    // Shimmering high sparkle overtone
+    for (let j = 0; j < 5; j++) {
+      const sparkleOsc = this.ctx!.createOscillator();
+      const sparkleGain = this.ctx!.createGain();
+      sparkleOsc.type = 'sine';
+      sparkleOsc.frequency.setValueAtTime(2200 + j * 450, now + 0.45 + j * 0.06);
+      sparkleGain.gain.setValueAtTime(0, now + 0.45 + j * 0.06);
+      sparkleGain.gain.linearRampToValueAtTime(0.08, now + 0.45 + j * 0.06 + 0.01);
+      sparkleGain.gain.exponentialRampToValueAtTime(0.001, now + 0.45 + j * 0.06 + 0.15);
+      sparkleOsc.connect(sparkleGain);
+      sparkleGain.connect(this.sfxGain!);
+      sparkleOsc.start(now + 0.45 + j * 0.06);
+      sparkleOsc.stop(now + 0.45 + j * 0.06 + 0.15);
+    }
+  }
+
+  public playMissionComplete() {
+    this.init();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const now = this.ctx.currentTime;
+    const notes = [783.99, 987.77, 1318.51]; // G5, B5, E6
+    notes.forEach((freq, i) => {
+      const osc = this.ctx!.createOscillator();
+      const g = this.ctx!.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + i * 0.08);
+
+      g.gain.setValueAtTime(0, now + i * 0.08);
+      g.gain.linearRampToValueAtTime(0.12, now + i * 0.08 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.25);
+
+      osc.connect(g);
+      g.connect(this.sfxGain!);
+      osc.start(now + i * 0.08);
+      osc.stop(now + i * 0.08 + 0.25);
+    });
+  }
+
+  public playBadgeClaim() {
+    this.init();
+    if (!this.ctx || !this.sfxGain) return;
+
+    const now = this.ctx.currentTime;
+    const notes = [523.25, 659.25, 783.99, 987.77, 1174.66, 1567.98];
+    notes.forEach((freq, i) => {
+      const osc = this.ctx!.createOscillator();
+      const g = this.ctx!.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now + i * 0.06);
+
+      g.gain.setValueAtTime(0, now + i * 0.06);
+      g.gain.linearRampToValueAtTime(0.15, now + i * 0.06 + 0.015);
+      g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.06 + 0.35);
+
+      osc.connect(g);
+      g.connect(this.sfxGain!);
+      osc.start(now + i * 0.06);
+      osc.stop(now + i * 0.06 + 0.35);
+    });
+
+    for (let j = 0; j < 4; j++) {
+      const sOsc = this.ctx!.createOscillator();
+      const sG = this.ctx!.createGain();
+      sOsc.type = 'triangle';
+      sOsc.frequency.setValueAtTime(2600 + j * 500, now + 0.3 + j * 0.07);
+      sG.gain.setValueAtTime(0, now + 0.3 + j * 0.07);
+      sG.gain.linearRampToValueAtTime(0.07, now + 0.3 + j * 0.07 + 0.01);
+      sG.gain.exponentialRampToValueAtTime(0.001, now + 0.3 + j * 0.07 + 0.2);
+      sOsc.connect(sG);
+      sG.connect(this.sfxGain!);
+      sOsc.start(now + 0.3 + j * 0.07);
+      sOsc.stop(now + 0.3 + j * 0.07 + 0.2);
+    }
+  }
+
   private synthesizeTom(freq: number, decay: number, volume: number) {
     if (!this.ctx || !this.bgmGain) return;
     const now = this.ctx.currentTime;
@@ -259,6 +387,15 @@ class SoundManager {
     osc.stop(now + decay);
   }
 
+  private beatListeners: (() => void)[] = [];
+
+  public subscribeBeat(cb: () => void) {
+    this.beatListeners.push(cb);
+    return () => {
+      this.beatListeners = this.beatListeners.filter(l => l !== cb);
+    };
+  }
+
   public startBGM(pressure: number = 1.0, mode: string = 'standard') {
     this.init();
     if (!this.ctx || this.isBGMPlaying) return;
@@ -272,6 +409,10 @@ class SoundManager {
       if (!this.isBGMPlaying || !this.ctx) return;
 
       const now = this.ctx.currentTime;
+      
+      if (step % 4 === 0) {
+        this.beatListeners.forEach(cb => cb());
+      }
       
       if (mode === 'crazy') {
           // HEART ATTACK RHYTHM: Double Thump (LUB-DUB)
