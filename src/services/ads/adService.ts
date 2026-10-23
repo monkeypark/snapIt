@@ -197,7 +197,7 @@ class AdService {
    */
   public async showInterstitial(): Promise<boolean> {
     if (!this.isNative) {
-      if (!AD_CONFIG.adsense.enabled) return true;
+      if (!AD_CONFIG.adsense.enabled || !AD_CONFIG.adsense.popupEnabled) return true;
 
       return new Promise<boolean>((resolve) => {
         const handleClosed = () => {
@@ -229,6 +229,10 @@ class AdService {
    * Track game completion and show interstitial ad periodically (every 10 games)
    */
   public async onGameCompleted(): Promise<boolean> {
+    if (!this.isNative && !AD_CONFIG.adsense.popupEnabled) {
+      return false;
+    }
+
     const requiredInterval = this.isNative
       ? AD_CONFIG.admob.interstitialInterval
       : AD_CONFIG.adsense.popupInterval;

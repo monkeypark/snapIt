@@ -10,6 +10,8 @@ export interface AdConfiguration {
   // Google AdSense (Web)
   adsense: {
     enabled: boolean;
+    bannerEnabled: boolean;
+    popupEnabled: boolean;
     publisherId: string; // e.g. "ca-pub-XXXXXXXXXXXXXXXX"
     bannerSlotId: string; // Bottom banner slot
     interstitialSlotId: string; // Display ad slot for popups
@@ -42,10 +44,12 @@ export interface AdConfiguration {
 export const AD_CONFIG: AdConfiguration = {
   adsense: {
     enabled: true,
+    bannerEnabled: true,
+    popupEnabled: false, // Disabled: user requested banner only
     publisherId: 'ca-pub-3612854431763761',
     bannerSlotId: '6893583461',
-    interstitialSlotId: '9128864564', // Official display ad slot
-    popupInterval: 10, // Popup every 10 games
+    interstitialSlotId: '9128864564',
+    popupInterval: 10,
     testMode: false
   },
 

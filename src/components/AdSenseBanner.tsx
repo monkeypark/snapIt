@@ -39,7 +39,7 @@ export const AdSenseBanner: React.FC<AdSenseBannerProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!AD_CONFIG.adsense.enabled || !isVisible || isNative) return;
+    if (!AD_CONFIG.adsense.enabled || !AD_CONFIG.adsense.bannerEnabled || !isVisible || isNative) return;
 
     if (!AD_CONFIG.adsense.testMode && insRef.current) {
       // Check if this ad unit is already initialized by Google AdSense
@@ -57,7 +57,7 @@ export const AdSenseBanner: React.FC<AdSenseBannerProps> = ({
   }, [isVisible, isNative]);
 
   // Do not display web AdSense in native mobile app (AdMob is used instead)
-  if (!AD_CONFIG.adsense.enabled || isNative) {
+  if (!AD_CONFIG.adsense.enabled || !AD_CONFIG.adsense.bannerEnabled || isNative) {
     return null;
   }
 
