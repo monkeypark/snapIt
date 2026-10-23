@@ -13,16 +13,17 @@
     "cap:android": "npm run build && npx cap sync android && npx cap open android",
     "cap:ios": "npm run build && npx cap sync ios && npx cap open ios",
     "build:android": "npm run build && npx cap sync android && (cd android && ./gradlew assembleDebug)",
-    "bundle:android": "npm run build && npx cap sync android && (cd android && ./gradlew bundleRelease)"
+    "bundle:android": "npm run build && npx cap sync android && (cd android && ./gradlew bundleRelease)",
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
+    "@capacitor-community/admob": "^6.2.0",
+    "@capacitor/android": "^6.2.2",
     "@capacitor/app": "^6.0.3",
     "@capacitor/core": "^6.2.2",
-    "@capacitor/android": "^6.2.2",
-    "@capacitor/ios": "^6.2.2",
-    "@capacitor-community/admob": "^6.2.0",
     "@capacitor/filesystem": "^6.0.4",
     "@capacitor/haptics": "^6.0.3",
+    "@capacitor/ios": "^6.2.2",
     "@capacitor/preferences": "^6.0.4",
     "@capacitor/share": "^6.0.4",
     "@google/genai": "^2.4.0",
@@ -40,13 +41,14 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^6.2.2",
+    "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.4.21",
+    "gh-pages": "^6.3.0",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
-    "typescript": "^7.0.2",
-    "@types/express": "^4.17.21"
+    "typescript": "^7.0.2"
   }
 }
